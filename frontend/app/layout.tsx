@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
 import Navbar from "@/components/Navbar";
+import AuthGuard from "@/components/AuthGuard";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -8,19 +9,17 @@ export const metadata: Metadata = {
   description: "Find your perfect tech job with AI-powered recommendations",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
         <Providers>
-          <Navbar />
-          <main className="min-h-screen bg-gray-50">
-            {children}
-          </main>
+          <AuthGuard>
+            <Navbar />
+            <main className="min-h-screen bg-gray-50">
+              {children}
+            </main>
+          </AuthGuard>
         </Providers>
       </body>
     </html>

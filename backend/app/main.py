@@ -63,7 +63,8 @@ def health_check():
 
 # Import routers AFTER app creation to avoid circular imports
 try:
-    from backend.app.api import jobs, applications, pipeline, stats
+    from backend.app.api import jobs, applications, pipeline, stats, auth
+    app.include_router(auth.router)
     app.include_router(jobs.router)
     app.include_router(applications.router)
     app.include_router(pipeline.router)
