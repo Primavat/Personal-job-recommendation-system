@@ -39,7 +39,19 @@ def get_db():
 
 
 def init_db():
-    """Create all tables."""
+    """Create all tables and seed default data."""
     # Import models here to avoid circular imports
     from backend.app.models.models import User, Job, Application, PipelineRun, UserPreferences
     Base.metadata.create_all(bind=engine)
+    
+    # Seed default user if not exists
+    db = SessionLocal()
+    try:
+        test_user = db.query(User).filter(User.email == "test@example.com").first()
+        if not test_user:
+            import uuid
+            new_user = User(id=str(uuid.uuid4()), email="test@example.com")
+            db.add(new_user)
+            db.commit()
+    finally:
+        db.close()

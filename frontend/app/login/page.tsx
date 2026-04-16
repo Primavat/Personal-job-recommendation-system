@@ -16,7 +16,8 @@ export default function LoginPage() {
     setLoading(true);
     setDebugInfo('');
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const apiUrl = rawApiUrl.replace(/\/$/, '');
       setDebugInfo(`Connecting to: ${apiUrl}/api/auth/login`);
 
       const res = await fetch(`${apiUrl}/api/auth/login`, {
