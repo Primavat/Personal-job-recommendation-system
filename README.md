@@ -115,14 +115,38 @@ python main.py --schedule --notify
 
 ---
 
-## Future Improvements
+## 📚 Documentation
 
-- **Email Alerts** — Add email notification support alongside Telegram
-- **Web Dashboard** — React frontend for visual job browsing and filtering
-- **Resume Matching** — AI-powered matching between job descriptions and user resumes
-- **Application Tracking** — Add status columns (Applied, Interview, Offer) with UI updates
-- **More Sources** — Integrate LinkedIn, Indeed, and company career pages via scraping
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Complete setup and deployment guide
+- **[IMPLEMENTATION_CHECKLIST.md](./IMPLEMENTATION_CHECKLIST.md)** - Project status and feature checklist
+- **[backend/README.md](./backend/README.md)** - Backend API documentation
+- **[frontend/README.md](./frontend/README.md)** - Frontend setup guide
 
 ---
 
-**Developed by Primavat**
+## Future Improvements
+
+- **Email Alerts** — Add email notification support alongside Telegram
+- **OAuth Integration** — Google, GitHub, Supabase Auth support
+- **Resume Matching** — AI-powered matching between job descriptions and user resumes
+- **Kanban Board** — Visual application tracking with drag-and-drop
+- **Advanced Analytics** — Trends, recommendations, job market insights
+- **Mobile App** — React Native application for iOS/Android
+- **More Sources** — Integrate LinkedIn, Indeed, and company career pages via scraping
+- **API for Integrations** — Third-party webhook and REST API access
+
+---
+
+## 🎯 Project Status
+
+✅ **Phase 1: Backend API** - Complete  
+✅ **Phase 2: Frontend UI** - Complete  
+✅ **Phase 3: Integration** - Complete  
+✅ **Phase 4: Bug Fixes** - Complete  
+✅ **Phase 5: Documentation** - Complete  
+
+**Overall Status**: 🚀 **PRODUCTION READY**
+
+---
+
+**Developed by Priyanshu**
