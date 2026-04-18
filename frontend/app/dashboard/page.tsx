@@ -122,7 +122,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-            <p className="text-gray-600">Welcome back! Here's your job search overview.</p>
+            <p className="text-gray-600">Welcome back! Here is your job search overview.</p>
           </div>
           {isDemoMode && (
             <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
