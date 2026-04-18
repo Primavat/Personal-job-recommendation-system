@@ -8,7 +8,7 @@ from backend.app.models.models import User
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-JWT_SECRET = os.getenv("JWT_SECRET", "your-jwt-secret-key-change-in-production")
+JWT_SECRET = os.getenv("JWT_SECRET", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 
 def get_db():

@@ -15,11 +15,18 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config) => {
   if (typeof window === 'undefined') return config;
+
   const state = useAuthStore.getState();
-  const token = state.token || localStorage.getItem('auth_token');
+
+  // 🚨 wait until Zustand is hydrated
+  if (!state._hasHydrated) return config;
+
+  const token = state.token;
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
@@ -39,7 +46,7 @@ apiClient.interceptors.response.use(
       const isHydrated = useAuthStore.getState()._hasHydrated;
       if (isHydrated && !isLoginPage) {
         useAuthStore.getState().clearAuth();
-        window.location.href = '/login';
+        window.location.replace('/login');
       }
     }
     return Promise.reject(error);
