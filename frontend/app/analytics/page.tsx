@@ -18,12 +18,37 @@ import {
 } from 'recharts';
 
 export default function AnalyticsPage() {
-  const { data: analytics } = useQuery({
+  const { data: analytics, error } = useQuery({
     queryKey: ['analytics'],
     queryFn: () => statsAPI.getAnalytics(),
   });
 
-  const analyticsData = analytics?.data;
+  // Demo mode: mock analytics when backend is unavailable
+  const isDemoMode = error && (error as any).isDemoModeError;
+  const mockAnalytics = {
+    overview: {
+      total_jobs: 247,
+      total_applications: 12,
+      saved_count: 5,
+      applied_count: 7,
+    },
+    by_category: [
+      { category: 'Software Engineering', count: 85 },
+      { category: 'AI / ML', count: 45 },
+      { category: 'Frontend / Web', count: 38 },
+      { category: 'Backend / Full Stack', count: 42 },
+      { category: 'DevOps / Cloud', count: 25 },
+      { category: 'Data Engineering', count: 12 },
+    ],
+    by_source: [
+      { source: 'Remotive', count: 95 },
+      { source: 'Arbeitnow', count: 78 },
+      { source: 'The Muse', count: 52 },
+      { source: 'FindWork', count: 22 },
+    ],
+  };
+
+  const analyticsData = isDemoMode ? mockAnalytics : analytics?.data;
 
   if (!analyticsData) {
     return (
@@ -52,10 +77,19 @@ export default function AnalyticsPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics</h1>
-        <p className="text-gray-600">
-          Insights about the job market and your progress
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics</h1>
+            <p className="text-gray-600">
+              Insights about the job market and your progress
+            </p>
+          </div>
+          {!process.env.NEXT_PUBLIC_API_URL && (
+            <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+              ⚠️ Demo Mode
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Overview Stats */}

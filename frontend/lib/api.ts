@@ -5,9 +5,12 @@ const API_BASE = (typeof window !== 'undefined'
   ? process.env.NEXT_PUBLIC_API_URL
   : undefined) || 'http://localhost:8000';
 
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || !process.env.NEXT_PUBLIC_API_URL;
+
 export const apiClient = axios.create({
   baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 10000, // 10 second timeout
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -24,6 +27,13 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (typeof window === 'undefined') return Promise.reject(error);
+    
+    // If backend is not available and we're in demo mode, return mock data
+    if (DEMO_MODE && (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || !error.response)) {
+      console.warn('Backend not available, using demo mode');
+      return Promise.reject({ ...error, isDemoModeError: true });
+    }
+    
     if (error.response?.status === 401) {
       const isLoginPage = window.location.pathname === '/login';
       const isHydrated = useAuthStore.getState()._hasHydrated;

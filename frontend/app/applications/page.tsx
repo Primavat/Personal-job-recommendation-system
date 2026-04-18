@@ -9,7 +9,7 @@ export default function ApplicationsPage() {
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
-  const { data } = useQuery({
+  const { data, error } = useQuery({
     queryKey: ['applications', filterStatus, page],
     queryFn: () =>
       applicationsAPI.list({
@@ -19,18 +19,52 @@ export default function ApplicationsPage() {
       }),
   });
 
-  const applications = data?.data?.items || [];
-  const total = data?.data?.total || 0;
-  const pages = data?.data?.pages || 1;
+  // Demo mode: mock applications when backend is unavailable
+  const isDemoMode = error && (error as any).isDemoModeError;
+  const mockApplications = [
+    {
+      id: 1,
+      status: 'saved',
+      created_at: new Date().toISOString(),
+      job: {
+        title: 'Software Engineering Intern',
+        company: 'Google',
+        apply_link: 'https://careers.google.com',
+      },
+    },
+    {
+      id: 2,
+      status: 'applied',
+      created_at: new Date(Date.now() - 86400000).toISOString(),
+      job: {
+        title: 'ML Engineer',
+        company: 'OpenAI',
+        apply_link: 'https://openai.com/careers',
+      },
+    },
+  ];
+
+  const applications = isDemoMode ? mockApplications : (data?.data?.items || []);
+  const total = isDemoMode ? mockApplications.length : (data?.data?.total || 0);
+  const pages = isDemoMode ? 1 : (data?.data?.pages || 1);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Application Tracker</h1>
-        <p className="text-gray-600">
-          Track all your saved and applied jobs in one place
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Application Tracker</h1>
+            <p className="text-gray-600">
+              Track all your saved and applied jobs in one place
+            </p>
+          </div>
+          {!process.env.NEXT_PUBLIC_API_URL && (
+            <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+              ⚠️ Demo Mode
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Status Filter */}

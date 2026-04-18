@@ -25,7 +25,7 @@ export default function Dashboard() {
 
   // ── Latest pipeline run — polls every 3 s while status is "running" ────────
   // FIX 3: enabled flag — queries only fire when token is confirmed present
-  const { data: latestRun } = useQuery({
+  const { data: latestRun, isError: runError } = useQuery({
     queryKey: ['latest-run'],
     queryFn: () => pipelineAPI.getStatus(),
     enabled: _hasHydrated && !!token,          // ← KEY FIX: don't fire without token
@@ -36,31 +36,53 @@ export default function Dashboard() {
     refetchIntervalInBackground: false,
   });
 
-  const isRunning = latestRun?.data?.status === 'running';
-
   // ── Stats — refreshed automatically when a run finishes ───────────────────
-  const { data: stats } = useQuery({
+  const { data: stats, isError: statsError } = useQuery({
     queryKey: ['stats'],
     queryFn: () => statsAPI.getOverview(),
     enabled: _hasHydrated && !!token,          // ← KEY FIX: same guard
   });
 
+  // Demo mode: use mock data if backend is unavailable
+  const isDemoMode = runError || statsError;
+  const mockStats = {
+    total_jobs: 247,
+    total_applications: 12,
+    saved_count: 5,
+    applied_count: 7,
+    recent_runs: []
+  };
+  const mockLatestRun = {
+    data: {
+      id: 1,
+      status: 'completed',
+      started_at: new Date().toISOString(),
+      jobs_collected: 50,
+      jobs_processed: 45,
+      jobs_added: 42
+    }
+  };
+
+  const statsData = isDemoMode ? mockStats : stats?.data?.overview;
+  const latestRunData = isDemoMode ? mockLatestRun : latestRun;
+  const isRunning = latestRunData?.data?.status === 'running';
+
   // Detect pipeline run transitions and react accordingly
   const prevStatus = React.useRef<string | undefined>(undefined);
   React.useEffect(() => {
-    const status = latestRun?.data?.status;
+    const status = latestRunData?.data?.status;
     if (prevStatus.current === 'running' && status !== 'running') {
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       if (status === 'completed') {
         toast.success(
-          `Pipeline finished! ${latestRun?.data?.jobs_added ?? 0} jobs added.`
+          `Pipeline finished! ${latestRunData?.data?.jobs_added ?? 0} jobs added.`
         );
       } else if (status === 'failed') {
         toast.error('Pipeline failed. Check the backend logs.');
       }
     }
     prevStatus.current = status;
-  }, [latestRun?.data?.status, latestRun?.data?.jobs_added, queryClient]);
+  }, [latestRunData?.data?.status, latestRunData?.data?.jobs_added, queryClient]);
 
   // ── Trigger pipeline mutation ───────────────────────────────────────────────
   const pipelineMutation = useMutation({
@@ -70,11 +92,13 @@ export default function Dashboard() {
       queryClient.invalidateQueries({ queryKey: ['latest-run'] });
     },
     onError: () => {
-      toast.error('Failed to start pipeline. Please try again.');
+      if (isDemoMode) {
+        toast.error('Pipeline unavailable in demo mode. Backend is not connected.');
+      } else {
+        toast.error('Failed to start pipeline. Please try again.');
+      }
     },
   });
-
-  const statsData = stats?.data?.overview;
 
   // ── FIX 4: Show loader until Zustand has rehydrated from localStorage ─────
   if (!_hasHydrated) {
@@ -95,8 +119,17 @@ export default function Dashboard() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Welcome back! Here's your job search overview.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+            <p className="text-gray-600">Welcome back! Here's your job search overview.</p>
+          </div>
+          {isDemoMode && (
+            <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+              ⚠️ Demo Mode - Backend Unavailable
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -119,42 +152,42 @@ export default function Dashboard() {
               Running…
             </span>
           )}
-          {latestRun?.data?.status === 'completed' && (
+          {latestRunData?.data?.status === 'completed' && (
             <span className="flex items-center gap-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-full px-3 py-1">
               ✅ Completed
             </span>
           )}
-          {latestRun?.data?.status === 'failed' && (
+          {latestRunData?.data?.status === 'failed' && (
             <span className="flex items-center gap-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-full px-3 py-1">
               ❌ Failed
             </span>
           )}
         </div>
 
-        {latestRun?.data ? (
+        {latestRunData?.data ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div>
               <p className="text-gray-500 text-sm">Last Started</p>
               <p className="text-base font-semibold text-gray-900">
-                {formatDateTime(latestRun.data.started_at)}
+                {formatDateTime(latestRunData.data.started_at)}
               </p>
             </div>
             <div>
               <p className="text-gray-500 text-sm">Jobs Collected</p>
               <p className="text-base font-semibold text-gray-900">
-                {latestRun.data.jobs_collected ?? '—'}
+                {latestRunData.data.jobs_collected ?? '—'}
               </p>
             </div>
             <div>
               <p className="text-gray-500 text-sm">Jobs Processed</p>
               <p className="text-base font-semibold text-gray-900">
-                {latestRun.data.jobs_processed ?? '—'}
+                {latestRunData.data.jobs_processed ?? '—'}
               </p>
             </div>
             <div>
               <p className="text-gray-500 text-sm">Jobs Added</p>
               <p className="text-base font-semibold text-gray-900">
-                {latestRun.data.jobs_added ?? '—'}
+                {latestRunData.data.jobs_added ?? '—'}
               </p>
             </div>
           </div>
@@ -165,10 +198,12 @@ export default function Dashboard() {
         <button
           id="run-pipeline-btn"
           onClick={() => pipelineMutation.mutate()}
-          disabled={isRunning || pipelineMutation.isPending}
+          disabled={isRunning || pipelineMutation.isPending || isDemoMode}
           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed font-medium"
         >
-          {isRunning
+          {isDemoMode
+            ? '🚫 Backend Unavailable'
+            : isRunning
             ? '🔄 Pipeline is running…'
             : pipelineMutation.isPending
             ? '⏳ Triggering…'

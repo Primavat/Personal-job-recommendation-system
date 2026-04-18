@@ -48,9 +48,74 @@ export default function JobList({
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const jobs = data?.data?.items || [];
-  const total = data?.data?.total || 0;
-  const pages = data?.data?.pages || 1;
+  // Demo mode: mock jobs when backend is unavailable
+  const isDemoMode = error && (error as any).isDemoModeError;
+  const mockJobs = [
+    {
+      id: '1',
+      title: 'Software Engineering Intern',
+      company: 'Google',
+      location: 'Bangalore, India',
+      job_type: 'Internship',
+      category: 'Software Engineering',
+      date_posted: '2024-01-15',
+      source: 'Demo',
+      ai_summary: 'Looking for passionate CS students to join our team.',
+      user_application_status: null,
+    },
+    {
+      id: '2',
+      title: 'ML Engineer',
+      company: 'OpenAI',
+      location: 'Remote',
+      job_type: 'Full-time',
+      category: 'AI / ML',
+      date_posted: '2024-01-14',
+      source: 'Demo',
+      ai_summary: 'Build cutting-edge AI systems.',
+      user_application_status: null,
+    },
+    {
+      id: '3',
+      title: 'Frontend Developer',
+      company: 'Meta',
+      location: 'San Francisco, USA',
+      job_type: 'Full-time',
+      category: 'Frontend / Web',
+      date_posted: '2024-01-13',
+      source: 'Demo',
+      ai_summary: 'Work on React and modern web technologies.',
+      user_application_status: null,
+    },
+    {
+      id: '4',
+      title: 'DevOps Engineer',
+      company: 'AWS',
+      location: 'Remote',
+      job_type: 'Full-time',
+      category: 'DevOps / Cloud',
+      date_posted: '2024-01-12',
+      source: 'Demo',
+      ai_summary: 'Manage cloud infrastructure at scale.',
+      user_application_status: null,
+    },
+    {
+      id: '5',
+      title: 'Data Scientist',
+      company: 'Microsoft',
+      location: 'Seattle, USA',
+      job_type: 'Full-time',
+      category: 'Data Engineering',
+      date_posted: '2024-01-11',
+      source: 'Demo',
+      ai_summary: 'Analyze data to drive business decisions.',
+      user_application_status: null,
+    },
+  ];
+
+  const jobs = isDemoMode ? mockJobs : (data?.data?.items || []);
+  const total = isDemoMode ? mockJobs.length : (data?.data?.total || 0);
+  const pages = isDemoMode ? 1 : (data?.data?.pages || 1);
 
   if (isLoading) {
     return (

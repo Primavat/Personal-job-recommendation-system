@@ -21,10 +21,19 @@ export default function JobsPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Jobs</h1>
-        <p className="text-gray-600">
-          Discover tech jobs from multiple sources, filtered with AI
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Jobs</h1>
+            <p className="text-gray-600">
+              Discover tech jobs from multiple sources, filtered with AI
+            </p>
+          </div>
+          {!process.env.NEXT_PUBLIC_API_URL && (
+            <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+              ⚠️ Demo Mode
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Search Bar */}
