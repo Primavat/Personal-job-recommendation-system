@@ -6,14 +6,16 @@ import { useAuthStore } from '@/lib/store';
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated());
+  const token = useAuthStore((s) => s.token);
+  const _hasHydrated = useAuthStore((s) => s._hasHydrated);
 
   useEffect(() => {
+    if (!_hasHydrated) return; // wait for localStorage to load
     const publicRoutes = ['/login'];
-    if (!isAuthenticated && !publicRoutes.includes(pathname)) {
+    if (!token && !publicRoutes.includes(pathname)) {
       router.push('/login');
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [_hasHydrated, token, pathname, router]);
 
   return <>{children}</>;
 }
