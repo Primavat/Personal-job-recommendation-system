@@ -34,6 +34,11 @@ class Config:
     FINDWORK_API_URL: str  = "https://findwork.dev/api/jobs/"
     MUSE_API_URL: str      = "https://www.themuse.com/api/public/jobs"
 
+    # ── India Job APIs ────────────────────────────────────────────────────────
+    ADZUNA_APP_ID: str     = os.getenv("ADZUNA_APP_ID", "")
+    ADZUNA_APP_KEY: str    = os.getenv("ADZUNA_APP_KEY", "")
+    JSEARCH_API_KEY: str   = os.getenv("JSEARCH_API_KEY", "")
+
     # ── Telegram (optional) ──────────────────────────────────────────────────
     TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
     TELEGRAM_CHAT_ID: str   = os.getenv("TELEGRAM_CHAT_ID", "")
