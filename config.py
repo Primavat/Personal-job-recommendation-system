@@ -16,9 +16,9 @@ class Config:
     AI_MODEL: str        = os.getenv("AI_MODEL", "")
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 
-    CLAUDE_BATCH_SIZE: int = int(os.getenv("CHUNK_SIZE", "8"))
+    CLAUDE_BATCH_SIZE: int = int(os.getenv("CHUNK_SIZE", "25"))
     CLAUDE_MAX_TOKENS: int = 4000
-    CHUNK_SLEEP: float     = float(os.getenv("CHUNK_SLEEP", "15"))  # seconds between chunks
+    CHUNK_SLEEP: float     = float(os.getenv("CHUNK_SLEEP", "30"))  # seconds between chunks
 
     # ── Google Sheets ────────────────────────────────────────────────────────
     GOOGLE_CREDENTIALS_FILE: str  = os.getenv("GOOGLE_CREDENTIALS_FILE", "credentials.json")

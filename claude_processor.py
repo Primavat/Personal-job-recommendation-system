@@ -107,7 +107,10 @@ No markdown fences. No explanation. Pure JSON array only."""
         raw = fn(system, user)
         return self._parse(raw)
 
-    def _call_groq(self, system, user) -> str:
+    def _call_groq(self, system, user, retry: int = 0) -> str:
+        if retry > 5:
+            logger.error("Groq rate limit exceeded max retries — skipping chunk")
+            return "[]"
         r = self.client.post(
             "https://api.groq.com/openai/v1/chat/completions",
             json={
@@ -121,10 +124,10 @@ No markdown fences. No explanation. Pure JSON array only."""
                      "Content-Type": "application/json"},
         )
         if r.status_code == 429:
-            wait = 40
-            logger.warning(f"Groq rate limit — waiting {wait}s …")
+            wait = 60 * (retry + 1)   # 60s, 120s, 180s... backs off progressively
+            logger.warning(f"Groq rate limit — waiting {wait}s (retry {retry+1}/5)…")
             time.sleep(wait)
-            return self._call_groq(system, user)
+            return self._call_groq(system, user, retry + 1)
         if r.status_code != 200:
             logger.error(f"Groq error {r.status_code}: {r.text[:200]}")
             return "[]"
