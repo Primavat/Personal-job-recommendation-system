@@ -13,7 +13,11 @@ class Config:
     # ── AI Backend ───────────────────────────────────────────────────────────
     AI_BACKEND: str      = os.getenv("AI_BACKEND", "groq")
     AI_API_KEY: str      = os.getenv("AI_API_KEY", "")
+    GROQ_API_KEY_2: str   = os.getenv("GROQ_API_KEY_2", "")
+    GROQ_API_KEY_3: str   = os.getenv("GROQ_API_KEY_3", "")
+    GROQ_API_KEY_4: str   = os.getenv("GROQ_API_KEY_4", "")
     AI_MODEL: str        = os.getenv("AI_MODEL", "")
+    GEMINI_API_KEY: str   = os.getenv("GEMINI_API_KEY", "")
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 
     CLAUDE_BATCH_SIZE: int = int(os.getenv("CHUNK_SIZE", "25"))

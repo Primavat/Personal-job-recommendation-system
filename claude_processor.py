@@ -26,6 +26,15 @@ class ClaudeProcessor:
         self.client  = httpx.Client(timeout=90)
         self.backend = cfg.AI_BACKEND.lower()
 
+        # Support multiple Groq keys: AI_API_KEY, GROQ_API_KEY_2, GROQ_API_KEY_3, etc.
+        self.groq_keys = [k for k in [
+            cfg.AI_API_KEY,
+            getattr(cfg, "GROQ_API_KEY_2", None),
+            getattr(cfg, "GROQ_API_KEY_3", None),
+            getattr(cfg, "GROQ_API_KEY_4", None),
+        ] if k and "your-key-here" not in k]
+        self.groq_key_index = 0
+
     def process_batch(self, jobs: list[dict]) -> list[dict]:
         key = self.cfg.AI_API_KEY
         if not key or "your-key-here" in key:
@@ -105,43 +114,84 @@ No markdown fences. No explanation. Pure JSON array only."""
         if not fn:
             raise ValueError(f"Unknown AI_BACKEND: {self.backend}")
         raw = fn(system, user)
+
+        # If primary backend failed, fall back to Gemini
+        if raw == "[]" and self.backend != "gemini":
+            gemini_key = getattr(self.cfg, "GEMINI_API_KEY", None)
+            if gemini_key and "your-key-here" not in gemini_key:
+                logger.warning("Primary AI failed — falling back to Gemini…")
+                raw = self._call_gemini_with_key(system, user, gemini_key)
+            else:
+                logger.warning("Primary AI failed and no GEMINI_API_KEY set, cannot fall back.")
+
         return self._parse(raw)
 
-    def _call_groq(self, system, user, retry: int = 0) -> str:
-        if retry > 5:
-            logger.error("Groq rate limit exceeded max retries — skipping chunk")
+    def _call_groq(self, system: str, user: str, retry: int = 0) -> str:
+        if not self.groq_keys:
+            logger.error("No valid Groq API keys configured.")
             return "[]"
+
+        key = self.groq_keys[self.groq_key_index]
+
         r = self.client.post(
             "https://api.groq.com/openai/v1/chat/completions",
             json={
                 "model":       self.cfg.AI_MODEL or "llama-3.3-70b-versatile",
-                "messages":    [{"role":"system","content":system},
-                                {"role":"user","content":user}],
+                "messages":    [{"role": "system", "content": system},
+                                {"role": "user",   "content": user}],
                 "max_tokens":  4000,
                 "temperature": 0,
             },
-            headers={"Authorization": f"Bearer {self.cfg.AI_API_KEY}",
-                     "Content-Type": "application/json"},
+            headers={"Authorization": f"Bearer {key}",
+                     "Content-Type":  "application/json"},
         )
+
         if r.status_code == 429:
-            wait = 60 * (retry + 1)   # 60s, 120s, 180s... backs off progressively
-            logger.warning(f"Groq rate limit — waiting {wait}s (retry {retry+1}/5)…")
+            next_index = self.groq_key_index + 1
+
+            # Try next key immediately before sleeping
+            if next_index < len(self.groq_keys):
+                logger.warning(
+                    f"Groq key {self.groq_key_index + 1} rate limited — "
+                    f"switching to key {next_index + 1}…"
+                )
+                self.groq_key_index = next_index
+                return self._call_groq(system, user, retry)
+
+            # All keys exhausted — sleep and retry from first key
+            if retry >= 5:
+                logger.error("All Groq keys rate limited, max retries exceeded — skipping chunk")
+                return "[]"
+
+            self.groq_key_index = 0  # reset to first key
+            wait = 60 * (retry + 1)
+            logger.warning(
+                f"All {len(self.groq_keys)} Groq keys rate limited — "
+                f"waiting {wait}s (retry {retry + 1}/5)…"
+            )
             time.sleep(wait)
             return self._call_groq(system, user, retry + 1)
+
         if r.status_code != 200:
             logger.error(f"Groq error {r.status_code}: {r.text[:200]}")
             return "[]"
+
         return r.json()["choices"][0]["message"]["content"]
 
-    def _call_gemini(self, system, user) -> str:
-        model = self.cfg.AI_MODEL or "gemini-2.0-flash"
+    def _call_gemini(self, system: str, user: str) -> str:
+        """Used when AI_BACKEND=gemini is the primary backend."""
+        return self._call_gemini_with_key(system, user, self.cfg.AI_API_KEY)
+
+    def _call_gemini_with_key(self, system: str, user: str, key: str) -> str:
+        """Used for both primary (AI_BACKEND=gemini) and fallback calls."""
+        model = "gemini-2.0-flash"
         r = self.client.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-            params={"key": self.cfg.AI_API_KEY},
+            params={"key": key},
             json={
                 "system_instruction": {"parts": [{"text": system}]},
-                "contents": [{"parts": [{"text": user}]}],
-                "generationConfig": {"temperature": 0, "maxOutputTokens": 4000},
+                "contents":           [{"parts": [{"text": user}]}],
+                "generationConfig":   {"temperature": 0, "maxOutputTokens": 4000},
             },
         )
         if r.status_code != 200:
@@ -149,31 +199,31 @@ No markdown fences. No explanation. Pure JSON array only."""
             return "[]"
         return r.json()["candidates"][0]["content"]["parts"][0]["text"]
 
-    def _call_openrouter(self, system, user) -> str:
+    def _call_openrouter(self, system: str, user: str) -> str:
         r = self.client.post(
             "https://openrouter.ai/api/v1/chat/completions",
             json={
                 "model":      self.cfg.AI_MODEL or "meta-llama/llama-3.3-70b-instruct:free",
-                "messages":   [{"role":"system","content":system},
-                               {"role":"user","content":user}],
+                "messages":   [{"role": "system", "content": system},
+                               {"role": "user",   "content": user}],
                 "max_tokens": 4000,
             },
             headers={"Authorization": f"Bearer {self.cfg.AI_API_KEY}",
-                     "Content-Type": "application/json"},
+                     "Content-Type":  "application/json"},
         )
         if r.status_code != 200:
             logger.error(f"OpenRouter error {r.status_code}: {r.text[:200]}")
             return "[]"
         return r.json()["choices"][0]["message"]["content"]
 
-    def _call_claude(self, system, user) -> str:
+    def _call_claude(self, system: str, user: str) -> str:
         r = self.client.post(
             "https://api.anthropic.com/v1/messages",
             json={
                 "model":      self.cfg.AI_MODEL or "claude-sonnet-4-20250514",
                 "max_tokens": 4000,
                 "system":     system,
-                "messages":   [{"role":"user","content":user}],
+                "messages":   [{"role": "user", "content": user}],
             },
             headers={
                 "x-api-key":         self.cfg.AI_API_KEY,
@@ -182,10 +232,10 @@ No markdown fences. No explanation. Pure JSON array only."""
             },
         )
         if r.status_code == 400:
-            logger.error(f"Claude error: {r.json().get('error',{}).get('message')}")
+            logger.error(f"Claude error: {r.json().get('error', {}).get('message')}")
             return "[]"
         r.raise_for_status()
-        return "".join(b["text"] for b in r.json()["content"] if b.get("type")=="text")
+        return "".join(b["text"] for b in r.json()["content"] if b.get("type") == "text")
 
     def _parse(self, raw: str) -> list[dict]:
         raw   = re.sub(r"```(?:json)?|```", "", raw).strip()

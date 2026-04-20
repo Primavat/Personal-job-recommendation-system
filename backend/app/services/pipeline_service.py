@@ -155,10 +155,10 @@ class PipelineService:
                     category=job_data.get("category", "Other Tech"),
                     description=job_data.get("description", ""),
                     ai_summary=job_data.get("summary", ""),
-                    source=job_data["source"],
-                    apply_link=job_data["apply_link"],
+                    source=job_data.get("source", "unknown"),
+                    apply_link=job_data.get("apply_link", ""),
                     tags=job_data.get("tags", ""),
-                    date_posted=job_data["date_posted"],
+                    date_posted=job_data.get("date_posted", ""),
                 )
                 db.add(job)
                 added += 1
