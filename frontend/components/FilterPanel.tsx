@@ -135,7 +135,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
         <select
           value={category || ''}
           onChange={(e) => setCategory(e.target.value || null)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-black"
         >
           <option value="">All Categories</option>
           {categories?.data?.map((cat: string) => (
@@ -154,7 +154,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
         <select
           value={location || ''}
           onChange={(e) => setLocation(e.target.value || null)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-black"
         >
           <option value="">All Locations</option>
           {indiaLocations.length > 0 && (
@@ -195,7 +195,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
         <select
           value={jobType || ''}
           onChange={(e) => setJobType(e.target.value || null)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-black"
         >
           <option value="">All Types</option>
           {jobTypes.map((type) => (
@@ -214,7 +214,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
         <select
           value={source || ''}
           onChange={(e) => setSource(e.target.value || null)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-black"
         >
           <option value="">All Sources</option>
           {sources?.data?.map((src: string) => (
