@@ -1,4 +1,4 @@
-# Personal Job Recommendation System
+# Job_Aggregation--Tracking_Platform
 
 An automated pipeline that aggregates tech jobs and internships from multiple public APIs, filters and classifies them using AI, and delivers curated recommendations to Google Sheets—minimizing manual search effort for job seekers.
 
