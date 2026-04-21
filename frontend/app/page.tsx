@@ -1,21 +1,41 @@
+import Link from 'next/link';
+
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center mx-auto mb-6">
-          <span className="text-4xl font-bold text-blue-600">J</span>
-        </div>
-        <h1 className="text-4xl font-bold text-white mb-4">JobRec</h1>
-        <p className="text-xl text-blue-100 mb-8">
-          AI-Powered Tech Job Recommendations
-        </p>
-        <a
+    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-6">
+      {/* Logo */}
+      <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-8">
+        <span className="text-gray-950 text-2xl font-bold">J</span>
+      </div>
+
+      {/* Heading */}
+      <h1 className="text-5xl font-bold text-white tracking-tight mb-4 text-center">
+        JobRec
+      </h1>
+      <p className="text-gray-400 text-lg text-center max-w-md mb-12 leading-relaxed">
+        AI-powered tech job recommendations, filtered and ranked just for you.
+      </p>
+
+      {/* CTA */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Link
           href="/login"
-          className="inline-block px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition"
+          className="px-8 py-3 bg-white text-gray-900 text-sm font-semibold rounded-xl hover:bg-gray-100 transition-all duration-200"
         >
           Get Started
-        </a>
+        </Link>
+        <Link
+          href="/login"
+          className="px-8 py-3 bg-transparent border border-gray-700 text-gray-300 text-sm font-semibold rounded-xl hover:border-gray-500 hover:text-white transition-all duration-200"
+        >
+          Sign In
+        </Link>
       </div>
+
+      {/* Subtle bottom text */}
+      <p className="text-gray-600 text-xs mt-16 text-center">
+        © {new Date().getFullYear()} JobRec · Built by Primavat
+      </p>
     </div>
   );
 }
