@@ -36,13 +36,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
       {/* Theme Toggle */}
       <div className="absolute top-6 right-6">
         <ThemeToggle />
       </div>
 
-      <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-8 w-full max-w-md">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-12 h-12 bg-black dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
             <span className="text-white dark:text-black text-xl font-bold">J</span>
@@ -54,14 +54,14 @@ export default function LoginPage() {
         <div className="space-y-4">
           {isRegister && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Full Name
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent outline-none"
+                className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-blue-500 focus:border-transparent outline-none"
                 placeholder="Your name"
                 disabled={loading}
               />
@@ -69,7 +69,7 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Email Address
             </label>
             <input
@@ -77,14 +77,14 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-blue-500 focus:border-transparent outline-none"
               placeholder="you@example.com"
               disabled={loading}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Password
             </label>
             <input
@@ -92,7 +92,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-300 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900 dark:focus:ring-blue-500 focus:border-transparent outline-none"
               placeholder="••••••••"
               disabled={loading}
             />
@@ -101,7 +101,7 @@ export default function LoginPage() {
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full px-4 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-black text-sm font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
           >
             {loading ? 'Please wait...' : isRegister ? 'Create Account' : 'Login'}
           </button>

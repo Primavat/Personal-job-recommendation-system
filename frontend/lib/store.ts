@@ -88,17 +88,29 @@ export const useThemeStore = create<ThemeState>()(
       theme: 'light' as Theme,
       setTheme: (theme) => {
         set({ theme });
+        // Apply dark class to document for Tailwind
         if (typeof window !== 'undefined') {
-          localStorage.setItem('theme', theme);
           document.documentElement.classList.toggle('dark', theme === 'dark');
         }
       },
       toggleTheme: () => {
         const newTheme = get().theme === 'light' ? 'dark' : 'light';
-        get().setTheme(newTheme);
+        set({ theme: newTheme });
+        // Apply dark class to document for Tailwind
+        if (typeof window !== 'undefined') {
+          document.documentElement.classList.toggle('dark', newTheme === 'dark');
+        }
       },
     }),
-    { name: 'theme-storage' }
+    {
+      name: 'theme-storage',
+      onRehydrateStorage: () => (state) => {
+        // Apply dark class after hydration
+        if (state?.theme === 'dark' && typeof window !== 'undefined') {
+          document.documentElement.classList.add('dark');
+        }
+      },
+    }
   )
 );
 

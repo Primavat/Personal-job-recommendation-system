@@ -8,7 +8,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     <Providers>
       <AuthGuard>
         <Navbar />
-        <main className="min-h-screen bg-white dark:bg-black">
+        <main className="min-h-screen bg-gray-50 dark:bg-gray-950">
           {children}
         </main>
       </AuthGuard>
