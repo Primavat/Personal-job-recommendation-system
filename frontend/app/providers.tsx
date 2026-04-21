@@ -1,9 +1,8 @@
 'use client';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useThemeStore } from '@/lib/store';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,23 +14,20 @@ const queryClient = new QueryClient({
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [isVisible, setIsVisible] = useState(false);
+  const { setTheme } = useThemeStore();
 
   useEffect(() => {
-    setIsVisible(false);
-    const timer = setTimeout(() => setIsVisible(true), 50);
-    return () => clearTimeout(timer);
-  }, [pathname]);
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || stored === 'light') {
+      setTheme(stored as 'light' | 'dark');
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+    }
+  }, [setTheme]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div
-        className="transition-opacity duration-300 ease-in-out"
-        style={{ opacity: isVisible ? 1 : 0 }}
-      >
-        {children}
-      </div>
+      {children}
       <Toaster
         position="top-right"
         toastOptions={{

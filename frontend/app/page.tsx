@@ -1,8 +1,14 @@
 import Link from 'next/link';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-6">
+      {/* Theme Toggle */}
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
+      </div>
+
       {/* Logo */}
       <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-8">
         <span className="text-gray-950 text-2xl font-bold">J</span>

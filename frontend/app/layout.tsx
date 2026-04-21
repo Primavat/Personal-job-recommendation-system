@@ -10,18 +10,18 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-gray-50">
+      <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
         <Providers>
           <main className="flex-1">
             {children}
           </main>
-          <footer className="border-t border-gray-200 bg-white mt-auto">
+          <footer className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 mt-auto">
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-              <span className="text-sm text-gray-400">
+              <span className="text-sm text-gray-400 dark:text-gray-500">
                 © {new Date().getFullYear()} JobRec. All rights reserved.
               </span>
-              <span className="text-sm text-gray-400">
-                Built by <span className="text-gray-600 font-medium">Primavat</span>
+              <span className="text-sm text-gray-400 dark:text-gray-500">
+                Built by <span className="text-gray-600 dark:text-gray-300 font-medium">Primavat</span>
               </span>
             </div>
           </footer>
