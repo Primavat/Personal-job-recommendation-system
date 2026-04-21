@@ -42,27 +42,48 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
 
   const jobTypes = ['Internship', 'Full-time', 'Part-time', 'Contract', 'Freelance'];
 
-  const indiaLocations = [
-    'India',
-    'Remote (India)',
-    'Bangalore',
-    'Mumbai',
-    'Delhi',
-    'Hyderabad',
-    'Pune',
-    'Chennai',
-    'Kolkata',
-    'Ahmedabad',
-    'Noida',
-    'Gurgaon',
-  ];
+  // Dynamically filter India locations from API data
+  const indiaLocations = locations?.data?.filter((loc: string) =>
+    loc && (
+      loc.toLowerCase().includes('india') ||
+      loc.toLowerCase().includes('gujarat') ||
+      loc.toLowerCase().includes('karnataka') ||
+      loc.toLowerCase().includes('tamil nadu') ||
+      loc.toLowerCase().includes('maharashtra') ||
+      loc.toLowerCase().includes('telangana') ||
+      loc.toLowerCase().includes('uttar pradesh') ||
+      loc.toLowerCase().includes('rajasthan') ||
+      loc.toLowerCase().includes('west bengal') ||
+      loc.toLowerCase().includes('bangalore') ||
+      loc.toLowerCase().includes('mumbai') ||
+      loc.toLowerCase().includes('delhi') ||
+      loc.toLowerCase().includes('hyderabad') ||
+      loc.toLowerCase().includes('pune') ||
+      loc.toLowerCase().includes('chennai') ||
+      loc.toLowerCase().includes('kolkata') ||
+      loc.toLowerCase().includes('ahmedabad') ||
+      loc.toLowerCase().includes('noida') ||
+      loc.toLowerCase().includes('gurgaon') ||
+      loc.toLowerCase().includes('coimbatore') ||
+      loc.toLowerCase().includes('remote (india)')
+    )
+  ) ?? [];
 
-  const globalLocations = ['Remote', 'Remote (Global)'];
+  // Dynamically filter global/remote locations
+  const globalLocations = locations?.data?.filter((loc: string) =>
+    loc && (
+      loc.toLowerCase() === 'remote' ||
+      loc.toLowerCase().includes('remote (global)') ||
+      loc.toLowerCase().includes('worldwide') ||
+      loc.toLowerCase().includes('anywhere')
+    )
+  ) ?? [];
 
-  // Remaining locations from API excluding ones already in hardcoded groups
-  const hardcodedSet = new Set([...indiaLocations, ...globalLocations]);
+  // Everything else
+  const indiaSet = new Set(indiaLocations);
+  const globalSet = new Set(globalLocations);
   const otherLocations = locations?.data?.filter(
-    (loc: string) => loc && !hardcodedSet.has(loc)
+    (loc: string) => loc && !indiaSet.has(loc) && !globalSet.has(loc)
   ) ?? [];
 
   const hasPendingChanges =
@@ -136,20 +157,24 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Locations</option>
-          <optgroup label="🇮🇳 India">
-            {indiaLocations.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc}
-              </option>
-            ))}
-          </optgroup>
-          <optgroup label="🌍 Global / Remote">
-            {globalLocations.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc}
-              </option>
-            ))}
-          </optgroup>
+          {indiaLocations.length > 0 && (
+            <optgroup label="🇮🇳 India">
+              {indiaLocations.map((loc: string) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          {globalLocations.length > 0 && (
+            <optgroup label="🌍 Global / Remote">
+              {globalLocations.map((loc: string) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </optgroup>
+          )}
           {otherLocations.length > 0 && (
             <optgroup label="Other">
               {otherLocations.slice(0, 30).map((loc: string) => (

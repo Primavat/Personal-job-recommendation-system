@@ -1,83 +1,79 @@
 'use client';
-
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, clearAuth } = useAuthStore();
 
   const handleLogout = () => {
     clearAuth();
-    toast.success('Logged out successfully');
+    toast.success('Logged out');
     router.push('/login');
   };
 
-  return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">J</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">JobRec</span>
-            </Link>
-          </div>
+  const navLinks = [
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/jobs', label: 'Browse Jobs' },
+    { href: '/applications', label: 'Applications' },
+    { href: '/analytics', label: 'Analytics' },
+  ];
 
-          {/* Navigation Links */}
-          <div className="flex items-center space-x-8">
-            <Link
-              href="/dashboard"
-              className="text-gray-700 hover:text-blue-600 transition"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/jobs"
-              className="text-gray-700 hover:text-blue-600 transition"
-            >
-              Browse Jobs
-            </Link>
-            <Link
-              href="/applications"
-              className="text-gray-700 hover:text-blue-600 transition"
-            >
-              Applications
-            </Link>
-            <Link
-              href="/analytics"
-              className="text-gray-700 hover:text-blue-600 transition"
-            >
-              Analytics
-            </Link>
+  return (
+    <nav className="bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link href="/dashboard" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">J</span>
+            </div>
+            <span className="text-lg font-semibold text-gray-900 tracking-tight">JobRec</span>
+          </Link>
+
+          {/* Nav Links */}
+          <div className="flex items-center space-x-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  pathname === link.href
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-4">
-            {user && (
-              <>
-                <span className="text-gray-700 text-sm">{user.email}</span>
-                <Link
-                  href="/settings"
-                  className="text-gray-700 hover:text-blue-600 transition"
-                >
-                  ⚙️ Settings
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
+          {user && (
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-gray-500">{user.email}</span>
+              <Link
+                href="/settings"
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                  pathname === '/settings'
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                Settings
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
