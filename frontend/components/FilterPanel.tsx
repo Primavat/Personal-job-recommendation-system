@@ -119,7 +119,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-black">Filters</h3>
         {hasActiveFilters && (
           <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
             Active
@@ -129,7 +129,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
 
       {/* Category */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-black mb-2">
           Category
         </label>
         <select
@@ -148,7 +148,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
 
       {/* Location */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-black mb-2">
           Location
         </label>
         <select
@@ -189,7 +189,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
 
       {/* Job Type */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-black mb-2">
           Job Type
         </label>
         <select
@@ -208,7 +208,7 @@ export default function FilterPanel({ onFilterChange, onReset }: FilterPanelProp
 
       {/* Source */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-black mb-2">
           Source
         </label>
         <select

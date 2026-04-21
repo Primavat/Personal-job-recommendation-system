@@ -170,24 +170,24 @@ export default function JobList({
         <button
           onClick={() => setPage(Math.max(1, page - 1))}
           disabled={page === 1}
-          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg disabled:opacity-50 hover:bg-gray-300 transition"
+          className="px-4 py-2 bg-gray-200 text-gray-800 dark:text-white rounded-lg disabled:opacity-50 hover:bg-gray-300 transition"
         >
           Previous
         </button>
-        <span className="text-gray-700">
+        <span className="text-gray-700 dark:text-white">
           Page {page} of {pages}
         </span>
         <button
           onClick={() => setPage(Math.min(pages, page + 1))}
           disabled={page === pages}
-          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg disabled:opacity-50 hover:bg-gray-300 transition"
+          className="px-4 py-2 bg-gray-200 text-gray-800 dark:text-white rounded-lg disabled:opacity-50 hover:bg-gray-300 transition"
         >
           Next
         </button>
       </div>
 
       {/* Stats */}
-      <div className="mt-4 text-center text-sm text-gray-600">
+      <div className="mt-4 text-center text-sm text-gray-600 dark:text-white">
         Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} jobs
       </div>
     </div>
