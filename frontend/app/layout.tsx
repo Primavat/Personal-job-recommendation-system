@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               © {new Date().getFullYear()} JobRec. All rights reserved.
             </span>
             <span className="text-sm text-gray-400">
-              Built by <span className="text-gray-600 font-medium">Pranav</span>
+              Built by <span className="text-gray-600 font-medium">Primavat</span>
             </span>
           </div>
         </footer>

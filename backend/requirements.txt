@@ -20,3 +20,5 @@ apscheduler==3.10.4
 anthropic>=0.25.0
 supabase==2.3.0
 email-validator==2.2.0
+bcrypt
+

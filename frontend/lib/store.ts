@@ -4,10 +4,10 @@ import { persist } from 'zustand/middleware';
 // ── Auth Store ────────────────────────────────────────────────────────
 interface AuthState {
   token: string | null;
-  user: { id: string; email: string } | null;
+  user: { id: string; email: string; name?: string } | null;
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
-  setAuth: (token: string, user: { id: string; email: string }) => void;
+  setAuth: (token: string, user: { id: string; email: string; name?: string }) => void;
   clearAuth: () => void;
   isAuthenticated: () => boolean;
 }

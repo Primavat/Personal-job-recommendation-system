@@ -10,23 +10,17 @@ const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || !process.env.N
 export const apiClient = axios.create({
   baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 10000, // 10 second timeout
+  timeout: 10000,
 });
 
 apiClient.interceptors.request.use((config) => {
   if (typeof window === 'undefined') return config;
-
   const state = useAuthStore.getState();
-
-  // 🚨 wait until Zustand is hydrated
   if (!state._hasHydrated) return config;
-
   const token = state.token;
-
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
 
@@ -34,13 +28,10 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (typeof window === 'undefined') return Promise.reject(error);
-    
-    // If backend is not available and we're in demo mode, return mock data
     if (DEMO_MODE && (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || !error.response)) {
       console.warn('Backend not available, using demo mode');
       return Promise.reject({ ...error, isDemoModeError: true });
     }
-    
     if (error.response?.status === 401) {
       const isLoginPage = window.location.pathname === '/login';
       const isHydrated = useAuthStore.getState()._hasHydrated;
@@ -53,6 +44,16 @@ apiClient.interceptors.response.use(
   }
 );
 
+// ── Auth API ─────────────────────────────────────────────────────────
+export const authAPI = {
+  login: (email: string, password: string) =>
+    apiClient.post('/api/auth/login', { email, password }),
+  register: (email: string, password: string, name: string) =>
+    apiClient.post('/api/auth/register', { email, password, name }),
+  updateProfile: (data: { name?: string; email?: string }) =>
+    apiClient.patch('/api/auth/profile', data),
+};
+
 // ── Job API ──────────────────────────────────────────────────────────
 export const jobsAPI = {
   list: (params: {
@@ -64,7 +65,6 @@ export const jobsAPI = {
     job_type?: string;
     source?: string;
   }) => apiClient.get('/api/jobs', { params }),
-
   get: (id: string) => apiClient.get(`/api/jobs/${id}`),
   getCategories: () => apiClient.get('/api/jobs/filters/categories'),
   getSources: () => apiClient.get('/api/jobs/filters/sources'),
@@ -75,7 +75,6 @@ export const jobsAPI = {
 export const applicationsAPI = {
   list: (params: { status?: string; page?: number; limit?: number }) =>
     apiClient.get('/api/applications', { params }),
-
   get: (jobId: string) => apiClient.get(`/api/applications/${jobId}`),
   save: (jobId: string) => apiClient.post(`/api/applications/${jobId}/save`),
   unsave: (jobId: string) => apiClient.delete(`/api/applications/${jobId}/save`),

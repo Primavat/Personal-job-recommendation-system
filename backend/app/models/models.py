@@ -15,6 +15,8 @@ class User(Base):
 
     id = Column(String, primary_key=True, index=True)  # UUID from Supabase
     email = Column(String, unique=True, index=True)
+    name = Column(String, nullable=True)
+    hashed_password = Column(String, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
