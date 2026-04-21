@@ -14,7 +14,7 @@ const queryClient = new QueryClient({
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const { setTheme } = useThemeStore();
+  const { theme, setTheme } = useThemeStore();
 
   useEffect(() => {
     const stored = localStorage.getItem('theme');
@@ -24,6 +24,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       setTheme('dark');
     }
   }, [setTheme]);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   return (
     <QueryClientProvider client={queryClient}>

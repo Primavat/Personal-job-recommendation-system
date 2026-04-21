@@ -82,20 +82,25 @@ interface ThemeState {
   toggleTheme: () => void;
 }
 
-export const useThemeStore = create<ThemeState>((set, get) => ({
-  theme: 'light',
-  setTheme: (theme) => {
-    set({ theme });
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('theme', theme);
-      document.documentElement.classList.toggle('dark', theme === 'dark');
-    }
-  },
-  toggleTheme: () => {
-    const newTheme = get().theme === 'light' ? 'dark' : 'light';
-    get().setTheme(newTheme);
-  },
-}));
+export const useThemeStore = create<ThemeState>()(
+  persist(
+    (set, get) => ({
+      theme: 'light' as Theme,
+      setTheme: (theme) => {
+        set({ theme });
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('theme', theme);
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+        }
+      },
+      toggleTheme: () => {
+        const newTheme = get().theme === 'light' ? 'dark' : 'light';
+        get().setTheme(newTheme);
+      },
+    }),
+    { name: 'theme-storage' }
+  )
+);
 
 // ── UI Store ──────────────────────────────────────────────────────────
 interface UIState {
